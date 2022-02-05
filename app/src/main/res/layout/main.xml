@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dp" >
 
-    <TextView
-        android:id="@+id/caption_text"
+    <ImageView
+        android:id="@+id/iv_glasses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:typeface="sans" />
+        android:layout_centerInParent="true"
+        android:src="@drawable/glasses" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center" >
+    <TextView
+        android:layout_below="@+id/iv_glasses"
+        android:id="@+id/caption_text"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/back_primary"
+        android:padding="2dp"
+        android:text="Say, Hey Buddy!"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
 
-        <TextView
-            android:id="@+id/result_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

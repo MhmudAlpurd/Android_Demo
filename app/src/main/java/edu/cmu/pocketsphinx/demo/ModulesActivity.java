@@ -1,34 +1,11 @@
-/* ====================================================================
- * Copyright (c) 2014 Alpha Cephei Inc.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY ALPHA CEPHEI INC. ``AS IS'' AND
- * ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY
- * NOR ITS EMPLOYEES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * ====================================================================
- */
-
 package edu.cmu.pocketsphinx.demo;
+
+import static android.widget.Toast.makeText;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
@@ -36,7 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,18 +28,14 @@ import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
+import edu.cmu.pocketsphinx.demo.tts.Speech;
 
-import static android.widget.Toast.makeText;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-public class PocketSphinxActivity extends Activity implements
-        RecognitionListener {
+public class ModulesActivity extends Activity implements RecognitionListener {
+    String message_from_SpeechRecActivity= null;
 
     /* Named searches allow to quickly reconfigure the decoder */
-    private static final String KWS_SEARCH = "hey buddy";
+    private static final String KWS_SEARCH = "stop buddy";
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
     private static final String PHONE_SEARCH = "phones";
@@ -70,47 +43,68 @@ public class PocketSphinxActivity extends Activity implements
 
     /* Keyword we are looking for to activate menu */
     // private static final String KEYPHRASE = "oh mighty computer";
-    private static final String KEYPHRASE = "hey buddy";
+    private static final String KEYPHRASE = "stop buddy";
 
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+    private static SpeechRecognizer recognizer;
 
-    private SpeechRecognizer recognizer;
-    private HashMap<String, Integer> captions;
+    TextView enabledModule;
+    TextView obj;
+
+    private static long startTime = 0;
+    double elapsedTimeInSecond = 0;
 
     @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_modules);
 
-        // Prepare the data for UI
-        captions = new HashMap<>();
-        captions.put(KWS_SEARCH, R.string.kws_caption);
-        captions.put(MENU_SEARCH, R.string.menu_caption);
-        captions.put(DIGITS_SEARCH, R.string.digits_caption);
-        captions.put(PHONE_SEARCH, R.string.phone_caption);
-        captions.put(FORECAST_SEARCH, R.string.forecast_caption);
-        setContentView(R.layout.main);
+        startTime = SystemClock.uptimeMillis();
 
+        Log.v("DB_Modules", "onCreate: " + "01");
+
+        enabledModule = findViewById(R.id.tv_enabledModule);
+        obj = findViewById(R.id.tv_obj);
 
 
-       // ((TextView) findViewById(R.id.caption_text)).setText("Preparing the recognizer");
-        Log.v("test0101", "PocketSphixActivity");
+        String whichModule = getIntent().getStringExtra("whichModule");
+        String whichObject = getIntent().getStringExtra("whichObject");
+
+        if (whichModule != null && !whichModule.isEmpty()){
+            Speech.talk(whichModule, getApplicationContext());
+            enabledModule.setText(whichModule);
+        }
+        if (whichObject != null && !whichModule.isEmpty()){
+            obj.setText(whichObject);
+        }else {
+            obj.setText("");
+        }
+        Log.v("DB_Modules", "onCreate: " + "02");
+
+
         // Check if user has given permission to record audio
         int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
             return;
         }
-        // Recognizer initialization is a time-consuming and it involves IO,
-        // so we execute it in async task
-        new SetupTask(this).execute();
+
+        Log.v("DB_Modules", "onCreate: " + "03");
+
+        new ModulesActivity.SetupTask(this).execute();
+
+        Log.v("DB_Modules", "onCreate: " + "04");
+
     }
 
+
     private static class SetupTask extends AsyncTask<Void, Void, Exception> {
-        WeakReference<PocketSphinxActivity> activityReference;
-        SetupTask(PocketSphinxActivity activity) {
+        WeakReference<ModulesActivity> activityReference;
+        SetupTask(ModulesActivity activity) {
             this.activityReference = new WeakReference<>(activity);
         }
+
         @Override
         protected Exception doInBackground(Void... params) {
             try {
@@ -124,8 +118,10 @@ public class PocketSphinxActivity extends Activity implements
         }
         @Override
         protected void onPostExecute(Exception result) {
+            Log.v("DB_Modules", "onPostExecute: " + "01");
+
             if (result != null) {
-                ((TextView) activityReference.get().findViewById(R.id.caption_text)).setText("Failed to init recognizer " + result);
+              //  ((TextView) activityReference.get().findViewById(R.id.caption_text)).setText("Failed to init recognizer " + result);
             } else {
                 activityReference.get().switchSearch(KWS_SEARCH);
             }
@@ -136,12 +132,12 @@ public class PocketSphinxActivity extends Activity implements
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull  int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
+        goToMain(startTime, SystemClock.uptimeMillis());
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Recognizer initialization is a time-consuming and it involves IO,
                 // so we execute it in async task
-                new SetupTask(this).execute();
+                new ModulesActivity.SetupTask(this).execute();
             } else {
                 finish();
             }
@@ -150,7 +146,9 @@ public class PocketSphinxActivity extends Activity implements
 
     @Override
     public void onDestroy() {
+        goToMain(startTime, SystemClock.uptimeMillis());
         super.onDestroy();
+        Log.v("DB_Modules", "onDestroy: " + "01");
 
         if (recognizer != null) {
             recognizer.cancel();
@@ -165,14 +163,18 @@ public class PocketSphinxActivity extends Activity implements
      */
     @Override
     public void onPartialResult(Hypothesis hypothesis) {
+        goToMain(startTime, SystemClock.uptimeMillis());
+
+        Log.v("DB_Modules", "onPartialResult: " + "01");
+
         if (hypothesis == null)
             return;
 
         String text = hypothesis.getHypstr();
         if (text.equals(KEYPHRASE)) {
-            Log.v("TEST_ASR_SERVICE", "triggerword");
+            Log.v("TEST_ASR_SERVICE", "stop Buddy");
             switchSearch(MENU_SEARCH);
-            intentToSRActivity();
+            intentToPocketActivity();
             onDestroy();
         }
         /*else if (text.equals(DIGITS_SEARCH))
@@ -182,16 +184,19 @@ public class PocketSphinxActivity extends Activity implements
         else if (text.equals(FORECAST_SEARCH))
             switchSearch(FORECAST_SEARCH);*/
         else {
-            // ((TextView) findViewById(R.id.result_text)).setText(text);
+            //((TextView) findViewById(R.id.result_text)).setText(text);
         }
     }
 
-    private void intentToSRActivity() {
+    private void intentToPocketActivity() {
+        goToMain(startTime, SystemClock.uptimeMillis());
+        Log.v("DB_Modules", "intentToPocketActivity: " + "01");
+
         if (recognizer != null) {
             recognizer.cancel();
             recognizer.shutdown();
         }
-        Intent intent = new Intent(PocketSphinxActivity.this, SpeechRecActivity.class);
+        Intent intent = new Intent(ModulesActivity.this, PocketSphinxActivity.class);
         startActivity(intent);
     }
 
@@ -200,7 +205,10 @@ public class PocketSphinxActivity extends Activity implements
      */
     @Override
     public void onResult(Hypothesis hypothesis) {
-     //   ((TextView) findViewById(R.id.result_text)).setText("");
+        goToMain(startTime, SystemClock.uptimeMillis());
+
+        Log.v("DB_Modules", "onResult: " + "01");
+
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -209,6 +217,10 @@ public class PocketSphinxActivity extends Activity implements
 
     @Override
     public void onBeginningOfSpeech() {
+        goToMain(startTime, SystemClock.uptimeMillis());
+
+        Log.v("DB_Modules", "onBeginningOfSpeech: " + "01");
+
     }
 
     /**
@@ -216,11 +228,19 @@ public class PocketSphinxActivity extends Activity implements
      */
     @Override
     public void onEndOfSpeech() {
+        goToMain(startTime, SystemClock.uptimeMillis());
+
+        Log.v("DB_Modules", "onEndOfSpeech: " + "01");
+
         if (!recognizer.getSearchName().equals(KWS_SEARCH))
             switchSearch(KWS_SEARCH);
     }
 
     private void switchSearch(String searchName) {
+        goToMain(startTime, SystemClock.uptimeMillis());
+
+        Log.v("DB_Modules", "switchSearch: " + "01");
+
         recognizer.stop();
 
         // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
@@ -229,11 +249,12 @@ public class PocketSphinxActivity extends Activity implements
         else
             recognizer.startListening(searchName, 10000);
 
-        String caption = getResources().getString(captions.get(searchName));
-        //((TextView) findViewById(R.id.caption_text)).setText(caption);
+        //String caption = getResources().getString(captions.get(searchName));
+       // ((TextView) findViewById(R.id.caption_text)).setText(caption);
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
+        goToMain(startTime, SystemClock.uptimeMillis());
         // The recognizer can be configured to perform multiple searches
         // of different kind and switch between them
 
@@ -272,11 +293,36 @@ public class PocketSphinxActivity extends Activity implements
 
     @Override
     public void onError(Exception error) {
-      //  ((TextView) findViewById(R.id.caption_text)).setText(error.getMessage());
+        Log.v("DB_Modules", "onError: " + "01");
+        goToMain(startTime, SystemClock.uptimeMillis());
+        // ((TextView) findViewById(R.id.caption_text)).setText(error.getMessage());
     }
 
     @Override
     public void onTimeout() {
+        Log.v("DB_Modules", "onTimeout: " + "01");
+
         switchSearch(KWS_SEARCH);
     }
+
+
+    public double goToMain(long start, long end){
+        elapsedTimeInSecond =  (double) (end - start) / 1000 ;
+        if (elapsedTimeInSecond > 20){
+                intentToPockActivity();
+        }else {
+
+        }
+        return  elapsedTimeInSecond;
+    };
+
+    private void intentToPockActivity() {
+        if (recognizer != null) {
+            recognizer.cancel();
+            recognizer.shutdown();
+        }
+        Intent intent = new Intent(ModulesActivity.this, PocketSphinxActivity.class);
+        startActivity(intent);
+    }
+
 }
