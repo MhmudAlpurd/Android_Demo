@@ -35,7 +35,7 @@ public class ModulesActivity extends Activity implements RecognitionListener {
     String message_from_SpeechRecActivity= null;
 
     /* Named searches allow to quickly reconfigure the decoder */
-    private static final String KWS_SEARCH = "stop buddy";
+    private static final String KWS_SEARCH = "thanks buddy";
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
     private static final String PHONE_SEARCH = "phones";
@@ -43,7 +43,7 @@ public class ModulesActivity extends Activity implements RecognitionListener {
 
     /* Keyword we are looking for to activate menu */
     // private static final String KEYPHRASE = "oh mighty computer";
-    private static final String KEYPHRASE = "stop buddy";
+    private static final String KEYPHRASE = "thanks buddy";
 
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;

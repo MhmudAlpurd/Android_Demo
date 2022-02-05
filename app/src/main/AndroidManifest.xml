@@ -21,7 +21,7 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@drawable/icon"
+        android:icon="@drawable/cogniteye"
         android:theme="@style/AppTheme"
         android:label="@string/app_name">
         <activity

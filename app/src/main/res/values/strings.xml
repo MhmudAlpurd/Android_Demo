@@ -8,7 +8,7 @@
     <string name="forecast_caption">To try recognition of a weather forecast like \"sunny spells on Wednesday\".</string>
     <string name="phone_caption">To try phonetic recognition say anything.</string>
 
-    <string name="app_name" translatable="false">TR CognitEye</string>
+    <string name="app_name" translatable="false">ASR CognitEye</string>
     <string name="java_entry_title" translatable="false">Run the ML Kit quickstart written in Java</string>
     <string name="kotlin_entry_title" translatable="false">Run the ML Kit quickstart written in Kotlin</string>
     <string name="ok" translatable="false">OK</string>

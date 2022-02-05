@@ -25,5 +25,18 @@
         android:textSize="15dp"
         android:id="@+id/tv_obj" />
 
+    <TextView
+        android:layout_margin="20dp"
+        android:layout_below="@+id/tv_obj"
+        android:id="@+id/caption_text"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/back_primary"
+        android:padding="2dp"
+        android:text="Say -Thanks Buddy- to stop"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
 
 </RelativeLayout>
