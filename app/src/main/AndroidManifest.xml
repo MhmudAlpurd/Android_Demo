@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="edu.cmu.pocketsphinx.demo">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -10,12 +12,21 @@
         <package android:name="com.google.android.googlequicksearchbox" />
     </queries>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <meta-data
         android:name="com.google.android.wearable.standalone"
         android:value="true" />
 
-    <uses-feature android:name="android.hardware.type.watch" />
+    <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="ocr"/>
 
+
+
+    <uses-feature android:name="android.hardware.type.watch" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -25,16 +36,31 @@
         android:theme="@style/AppTheme"
         android:label="@string/app_name">
         <activity
-            android:name=".ModulesActivity"
-            android:exported="false" />
+            android:name=".ModulesActivity" />
         <activity
-            android:name=".SpeechRecActivity"
-            android:exported="false" />
+            android:name=".SpeechRecActivity" />
+        <activity
+            android:name=".textReading.LivePreviewActivity"
+             />
 
-        <service
-            android:name=".SpeechRecognition_Service"
-            android:enabled="true"
-            android:exported="true" />
+        <activity
+            android:name=".textToSpeech.Speech"
+             />
+
+        <activity
+            android:name=".textReading.CameraXLivePreviewActivity"
+             />
+        <activity
+            android:name=".preference.SettingsActivity"
+             />
+
+        <activity
+            android:name=".textReading.CameraXSourceDemoActivity"
+             />
+
+        <activity
+            android:name=".textReading.StillImageActivity"
+           />
 
         <activity
             android:name=".PocketSphinxActivity"

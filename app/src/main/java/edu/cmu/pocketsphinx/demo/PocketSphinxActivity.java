@@ -67,7 +67,6 @@ public class PocketSphinxActivity extends Activity implements
     private static final String DIGITS_SEARCH = "digits";
     private static final String PHONE_SEARCH = "phones";
     private static final String MENU_SEARCH = "menu";
-    private static int sensibility = 10;
 
     /* Keyword we are looking for to activate menu */
     // private static final String KEYPHRASE = "oh mighty computer";
@@ -237,6 +236,7 @@ public class PocketSphinxActivity extends Activity implements
         // The recognizer can be configured to perform multiple searches
         // of different kind and switch between them
 
+        int sensibility = 10;
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))

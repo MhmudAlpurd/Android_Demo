@@ -18,9 +18,8 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +28,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import edu.cmu.pocketsphinx.demo.commandRecogniton.COMMANDREC;
-import edu.cmu.pocketsphinx.demo.tts.Speech;
+import edu.cmu.pocketsphinx.demo.textReading.LivePreviewActivity;
+import edu.cmu.pocketsphinx.demo.textToSpeech.Speech;
 
 public class SpeechRecActivity extends Activity implements RecognitionListener {
     public static final String APP_TAG = "speech-to-text";
@@ -79,11 +79,6 @@ public class SpeechRecActivity extends Activity implements RecognitionListener {
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, false);  // Enable this when offline
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
-
-        //Beep
-
-
-
 
         // Speech language settings
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -174,12 +169,32 @@ public class SpeechRecActivity extends Activity implements RecognitionListener {
                     String moduleEnabled = whichModule + "module is enabled";
                     Speech.talk(moduleEnabled, getApplicationContext());
 
-                    Intent i = new Intent(SpeechRecActivity.this, ModulesActivity.class);
-                    i.putExtra("whichModule",whichModule);
-                    i.putExtra("whichObject",whichObject);
-                    speechRecognizer.stopListening();
-                    speechRecognizer.destroy();
-                    startActivity(i);
+
+                    switch (whichModule){
+
+                        case "Text Reading":
+                            Intent i = new Intent(SpeechRecActivity.this, LivePreviewActivity.class);
+                            i.putExtra("whichModule",whichModule);
+                            i.putExtra("whichObject",whichObject);
+                            speechRecognizer.stopListening();
+                            speechRecognizer.destroy();
+                            startActivity(i);
+                            break;
+
+                        default: // "Finding Object", "Scene Description", "Trigger Word"
+                            Intent j = new Intent(SpeechRecActivity.this, ModulesActivity.class);
+                            j.putExtra("whichModule",whichModule);
+                            j.putExtra("whichObject",whichObject);
+                            speechRecognizer.stopListening();
+                            speechRecognizer.destroy();
+                            startActivity(j);
+
+
+                    }
+
+
+
+
                 }else if(res != null && !res.isEmpty() && res.equalsIgnoreCase("")){
                     startTime = SystemClock.uptimeMillis();
                     Speech.talk("Repeat Your Command!", SpeechRecActivity.this);

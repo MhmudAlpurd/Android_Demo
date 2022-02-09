@@ -1,4 +1,4 @@
-package edu.cmu.pocketsphinx.demo.tts;
+package edu.cmu.pocketsphinx.demo.textToSpeech;
 
 import android.app.Activity;
 import android.content.Context;
@@ -50,13 +50,7 @@ public class Speech extends Activity {
             }
         });
 
-
-
-
     }
-
-
-
 
     public static void stopTalking(Context mContext){
         tts = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {

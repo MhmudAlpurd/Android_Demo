@@ -3,7 +3,6 @@ package edu.cmu.pocketsphinx.demo;
 import static android.widget.Toast.makeText;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -21,14 +20,13 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
-import edu.cmu.pocketsphinx.demo.tts.Speech;
+import edu.cmu.pocketsphinx.demo.textToSpeech.Speech;
 
 
 public class ModulesActivity extends Activity implements RecognitionListener {
@@ -257,10 +255,11 @@ public class ModulesActivity extends Activity implements RecognitionListener {
         goToMain(startTime, SystemClock.uptimeMillis());
         // The recognizer can be configured to perform multiple searches
         // of different kind and switch between them
-
+        int sensibility = 10;
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
+                .setKeywordThreshold(Float.valueOf("1.e-" + 2 * sensibility)) //Sensibility
 
                 .setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
 
