@@ -88,7 +88,7 @@ public final class LivePreviewActivity extends Activity
   private static final String DIGITS_SEARCH = "digits";
   private static final String PHONE_SEARCH = "phones";
   private static final String MENU_SEARCH = "stop buddy";
-  private static final String KEYPHRASE = "thanks buddy";
+  private static final String KEYPHRASE = "stop buddy";
 
   /* Used to handle permission request */
   private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;

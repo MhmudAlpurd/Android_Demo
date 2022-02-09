@@ -41,7 +41,7 @@ public class ModulesActivity extends Activity implements RecognitionListener {
 
     /* Keyword we are looking for to activate menu */
     // private static final String KEYPHRASE = "oh mighty computer";
-    private static final String KEYPHRASE = "thanks buddy";
+    private static final String KEYPHRASE = "stop buddy";
 
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
@@ -169,7 +169,7 @@ public class ModulesActivity extends Activity implements RecognitionListener {
             return;
 
         String text = hypothesis.getHypstr();
-        if (text.equals(KEYPHRASE)) {
+        if (text.equals(KEYPHRASE) | text.equals(KWS_SEARCH) ){
             Log.v("TEST_ASR_SERVICE", "stop Buddy");
             switchSearch(MENU_SEARCH);
             intentToPocketActivity();
