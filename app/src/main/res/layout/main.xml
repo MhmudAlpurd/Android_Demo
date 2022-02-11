@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:background="@color/back_primary"
         android:padding="2dp"
-        android:text="Say, Hey Buddy!"
+        android:text="Say, Hey nice Buddy :)"
         android:textColor="@color/white"
         android:textSize="15dp" />
 

@@ -51,6 +51,7 @@
         android:orientation="horizontal">
 
       <Spinner
+          android:visibility="gone"
           android:id="@+id/size_selector"
           android:layout_width="0dp"
           android:layout_weight="1"
@@ -58,6 +59,7 @@
           android:layout_gravity="center"/>
 
       <Spinner
+          android:visibility="gone"
           android:id="@+id/feature_selector"
           android:layout_width="0dp"
           android:layout_weight="1"

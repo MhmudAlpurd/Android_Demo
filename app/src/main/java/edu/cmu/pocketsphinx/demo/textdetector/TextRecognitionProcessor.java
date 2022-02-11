@@ -19,6 +19,7 @@ package edu.cmu.pocketsphinx.demo.textdetector;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -60,11 +61,11 @@ public class TextRecognitionProcessor extends VisionProcessorBase<Text> {
   String imgText = "text";
   String card_or_label = "";
   Context context;
+  int iterat = 0;
 
   TitleRecognizer titleRecognizer = new TitleRecognizer();
-  int numberOfFrame = 0;
-  int numberOfSpeech = 0;
-  int numberOfnullFrame = 0;
+  private static long startTime = 0;
+
 
 
   public TextRecognitionProcessor(
@@ -75,6 +76,7 @@ public class TextRecognitionProcessor extends VisionProcessorBase<Text> {
     showLanguageTag = PreferenceUtils.showLanguageTag(context);
     textRecognizer = TextRecognition.getClient(textRecognizerOptions);
     card_or_label = isLabel_or_isCard;
+    startTime = SystemClock.uptimeMillis();
     Log.v("isLabel_or_isCard", "TextRecognition: " + card_or_label);
   }
 
@@ -88,60 +90,54 @@ public class TextRecognitionProcessor extends VisionProcessorBase<Text> {
   @Override
   protected Task<Text> detectInImage(InputImage image) {
     Log.d("isLabel_or_isCard", "detectImage");
-
     Log.v("gggttt","image_name: "  +image.getBitmapInternal());
     return textRecognizer.process(image);
   }
 
   @Override
   protected void onSuccess(@NonNull Text text, @NonNull GraphicOverlay graphicOverlay) {
-    Log.d(TAG, "On-device Text detection successful");
-    Log.d("isLabel_or_isCard", "onSuccess");
-
-
+    goToMain(startTime, SystemClock.uptimeMillis());
     logExtrasForTesting(text);
     graphicOverlay.add(
         new TextGraphic(graphicOverlay, text, shouldGroupRecognizedTextInBlocks, showLanguageTag));
   }
 
   private void logExtrasForTesting(Text text) {
-    numberOfFrame += 1 ;
-    Log.v("isLabel_or_isCard", "logExtras: " + "entrance");
-    if (text != null && numberOfFrame % 40 == 0) {
+    goToMain(startTime, SystemClock.uptimeMillis());
+    if (text != null) {
       Log.v(MANUAL_TESTING_LOG, "Detected text has : " + text.getTextBlocks().size() + " blocks");
       Log.d("Text243", text.getText()); //text line by line!
+      Log.d("testnull", "all: " + spendedTime(startTime,SystemClock.uptimeMillis()  ));
+
+      if(text.getText().isEmpty()){
+        goToMain_ifNotFound(startTime, SystemClock.uptimeMillis());
+        Log.d("testnulll", "cardtime: " + spendedTime(startTime,SystemClock.uptimeMillis() ));
+      }
+
+      Log.d("testnulll", "cardtext: " + text.getText());
 
       for (int i = 0; i < text.getTextBlocks().size(); ++i) {
         List<Line> lines = text.getTextBlocks().get(i).getLines();
         if(card_or_label.equals("Label")){
           title = titleRecognizer.recognizeTitleForLabel(text, lines);
-          Log.v("isLabel_or_isCard", "logExtras: " + "Label");
-          Log.d("isLabel_or_isCard", "Title_card: " + title);
-
+          Log.d("label_text", "title: "+title);
         }else if (card_or_label.equals("Card")){
           title = titleRecognizer.recognizeTitleForCard(text);
-          Log.d("isLabel_or_isCard", "Title_card: " + title);
-          Log.v("isLabel_or_isCard", "logExtras: " + "Card");
-
         }else {
           title = titleRecognizer.recognizeTitleForLabel(text, lines);
-          Log.d("biggestBB", "Title_else: " + title);
         }
-        //Log.d("titletalk", "before: " + title);
+
         if(title != null && title != ""){
-          numberOfSpeech += 1 ;
-          numberOfnullFrame = 0;
-          Log.d("titletalk", "after: " + title);
-          Speech.talk(title, context);
-
-          if(numberOfSpeech == 40){
-            Speech.stopTalking(context);
-            Intent intent = new Intent(context, PocketSphinxActivity.class);
-            intent.putExtra("leaving_message", "Text reading module disabled");
-            context.startActivity(intent);
+          iterat ++;
+          startTime = SystemClock.uptimeMillis();
+          if ( iterat % 300 == 0){
+            Speech.talk(title, context);
+            iterat = 0;
           }
-
         }
+
+
+
         Log.v(
             MANUAL_TESTING_LOG,
             String.format("Detected text block %d has %d lines", i, lines.size()));
@@ -175,46 +171,55 @@ public class TextRecognitionProcessor extends VisionProcessorBase<Text> {
           }
         }
       }
-    }else {
-      numberOfnullFrame += 1;
-      //agar bad az 100 frame hich texti kashf nakard.bargard be warning bedeh, age 400 null boud bargard mainactivity.
-      switch (numberOfnullFrame){
-        case 100:
-        case 200:
-        case 300:
-          Speech.talk("There is no card in front of the camera.", context);
-          break;
-        case 400:
-          Speech.stopTalking(context);
-          Intent intent = new Intent(context, PocketSphinxActivity.class);
-          intent.putExtra("leaving_message", "Text reading module disabled");
-          context.startActivity(intent);
-
-        default:
-          Log.v("default", "defalut");
-
-
-
-
-      }
     }
   }
 
   @Override
   protected void onFailure(@NonNull Exception e) {
     Log.d("isLabel_or_isCard", "onFailure: " + e);
-
-
+    goToMain(startTime, SystemClock.uptimeMillis());
     Log.w(TAG, "Text detection failed." + e);
   }
 
-  public void delay(int milliSecondsToSleep){
-    try {
-      TimeUnit.MILLISECONDS.sleep(milliSecondsToSleep);
-    } catch (InterruptedException ie) {
-      Thread.currentThread().interrupt();
-    }
+
+
+  public void toFirstActivity(){
+    Speech.stopTalking(context);
+    Intent intent = new Intent(context, PocketSphinxActivity.class);
+    context.startActivity(intent);
   }
 
+  public void goToMain(long start, long end){
+
+    if (spendedTime(start, end) > 40){
+      toFirstActivity();
+    }else {
+      //nothing
+    }
+  };
+
+  int iteration= 0;
+  public void goToMain_ifNotFound(long start, long end){
+    if (10 < spendedTime(start, end) && spendedTime(start, end) < 11 && iteration==0){
+        iteration += 1;
+        Speech.talk("There is nothing in front of the camera.", context);
+    }else if (20 < spendedTime(start, end) && spendedTime(start, end) < 21 && iteration==1){
+        iteration += 1;
+        Speech.talk("There is nothing in front of the camera.", context);
+    }else if (30 < spendedTime(start, end) && spendedTime(start, end) < 30.2 && iteration==2) {
+      iteration += 1;
+      Speech.talk("Text reading module disabled", context);
+    }else if (spendedTime(start, end) > 30.2){
+      toFirstActivity();
+    }else {
+      //nothing
+    }
+  };
+
+  public double spendedTime(long startTime, long endTime){
+    double elapsedTimeInSecond =  (double) (endTime - startTime) / 1000 ;
+    return  elapsedTimeInSecond;
+
+  }
 
 }

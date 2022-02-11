@@ -117,11 +117,14 @@ public final class LivePreviewActivity extends Activity
     String whichModule = getIntent().getStringExtra("whichModule");
     String whichObject = getIntent().getStringExtra("whichObject");
 
+    Log.d("testlpa", "islable_or_iscard: " + whichObject); //Card or Label
+
     if (whichObject != null) {
       isLabel_or_isCard = whichObject;
     }else {
-      isLabel_or_isCard = "label";
+      isLabel_or_isCard = "Label";
     }
+
 
     Spinner spinner = findViewById(R.id.spinner);
     List<String> options = new ArrayList<>();
@@ -160,8 +163,6 @@ public final class LivePreviewActivity extends Activity
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
       return;
     }
-
-
     new LivePreviewActivity.SetupTask(this).execute();
   }
 
@@ -398,7 +399,7 @@ public final class LivePreviewActivity extends Activity
       Log.v("TEST_ASR_SERVICE", "stop Buddy");
      // switchSearch(MENU_SEARCH);
       intentToPocketActivity();
-      onDestroy();
+      this.onDestroy();
     }
         /*else if (text.equals(DIGITS_SEARCH))
             switchSearch(DIGITS_SEARCH);
@@ -413,7 +414,6 @@ public final class LivePreviewActivity extends Activity
   }
 
   private void intentToPocketActivity() {
-    goToMain(startTime, SystemClock.uptimeMillis());
     Log.v("DB_Modules", "intentToPocketActivity: " + "01");
 
     if (recognizer != null) {
@@ -472,7 +472,7 @@ public final class LivePreviewActivity extends Activity
     goToMain(startTime, SystemClock.uptimeMillis());
     // The recognizer can be configured to perform multiple searches
     // of different kind and switch between them
-    int sensibility = 50;
+    int sensibility = 75;
     recognizer = SpeechRecognizerSetup.defaultSetup()
             .setAcousticModel(new File(assetsDir, "en-us-ptm"))
             .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
@@ -526,8 +526,8 @@ public final class LivePreviewActivity extends Activity
 
   public double goToMain(long start, long end){
     elapsedTimeInSecond =  (double) (end - start) / 1000 ;
-    if (elapsedTimeInSecond > 20){
-      intentToPockActivity();
+    if (elapsedTimeInSecond > 40){
+    //  intentToPockActivity();
     }else {
 
     }

@@ -59,6 +59,7 @@ public class ModulesActivity extends Activity implements RecognitionListener {
         setContentView(R.layout.activity_modules);
 
         startTime = SystemClock.uptimeMillis();
+        Log.v("test012", "module");
 
         Log.v("DB_Modules", "onCreate: " + "01");
 
@@ -162,6 +163,7 @@ public class ModulesActivity extends Activity implements RecognitionListener {
     @Override
     public void onPartialResult(Hypothesis hypothesis) {
         goToMain(startTime, SystemClock.uptimeMillis());
+        Log.v("test012", "module");
 
         Log.v("DB_Modules", "onPartialResult: " + "01");
 
@@ -173,7 +175,6 @@ public class ModulesActivity extends Activity implements RecognitionListener {
             Log.v("TEST_ASR_SERVICE", "stop Buddy");
             switchSearch(MENU_SEARCH);
             intentToPocketActivity();
-            onDestroy();
         }
         /*else if (text.equals(DIGITS_SEARCH))
             switchSearch(DIGITS_SEARCH);

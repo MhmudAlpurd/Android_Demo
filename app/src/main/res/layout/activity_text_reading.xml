@@ -23,6 +23,7 @@
         app:layout_constraintBottom_toBottomOf="@id/preview_view"/>
 
     <include
+        android:visibility="gone"
         android:id="@+id/settings_button"
         layout="@layout/settings_style"
         android:layout_width="wrap_content"
@@ -51,6 +52,7 @@
             android:textOn=""/>
 
         <Spinner
+            android:visibility="gone"
             android:id="@+id/spinner"
             android:layout_width="0dp"
             android:layout_weight="1"

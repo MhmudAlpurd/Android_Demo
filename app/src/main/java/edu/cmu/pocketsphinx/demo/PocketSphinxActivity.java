@@ -51,6 +51,7 @@ import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
+import edu.cmu.pocketsphinx.demo.textToSpeech.Speech;
 
 import static android.widget.Toast.makeText;
 
@@ -62,7 +63,7 @@ public class PocketSphinxActivity extends Activity implements
         RecognitionListener {
 
     /* Named searches allow to quickly reconfigure the decoder */
-    private static final String KWS_SEARCH = "hey buddy";
+    private static final String KWS_SEARCH = "hey nice buddy";
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
     private static final String PHONE_SEARCH = "phones";
@@ -70,7 +71,7 @@ public class PocketSphinxActivity extends Activity implements
 
     /* Keyword we are looking for to activate menu */
     // private static final String KEYPHRASE = "oh mighty computer";
-    private static final String KEYPHRASE = "hey buddy";
+    private static final String KEYPHRASE = "hey nice buddy";
 
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
@@ -92,8 +93,8 @@ public class PocketSphinxActivity extends Activity implements
         setContentView(R.layout.main);
 
 
-       // ((TextView) findViewById(R.id.caption_text)).setText("Preparing the recognizer");
-        Log.v("test0101", "PocketSphixActivity");
+        // ((TextView) findViewById(R.id.caption_text)).setText("Preparing the recognizer");
+        Log.v("test00", "1");
         // Check if user has given permission to record audio
         int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -172,7 +173,6 @@ public class PocketSphinxActivity extends Activity implements
             Log.v("TEST_ASR_SERVICE", "triggerword");
             switchSearch(MENU_SEARCH);
             intentToSRActivity();
-            onDestroy();
         }
         /*else if (text.equals(DIGITS_SEARCH))
             switchSearch(DIGITS_SEARCH);
@@ -199,7 +199,7 @@ public class PocketSphinxActivity extends Activity implements
      */
     @Override
     public void onResult(Hypothesis hypothesis) {
-     //   ((TextView) findViewById(R.id.result_text)).setText("");
+        //   ((TextView) findViewById(R.id.result_text)).setText("");
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -236,7 +236,7 @@ public class PocketSphinxActivity extends Activity implements
         // The recognizer can be configured to perform multiple searches
         // of different kind and switch between them
 
-        int sensibility = 10;
+        int sensibility = 75;
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
@@ -271,11 +271,24 @@ public class PocketSphinxActivity extends Activity implements
 
     @Override
     public void onError(Exception error) {
-      //  ((TextView) findViewById(R.id.caption_text)).setText(error.getMessage());
+        //  ((TextView) findViewById(R.id.caption_text)).setText(error.getMessage());
     }
 
     @Override
     public void onTimeout() {
         switchSearch(KWS_SEARCH);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("test00", "2");
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.v("test00", "3");
     }
 }

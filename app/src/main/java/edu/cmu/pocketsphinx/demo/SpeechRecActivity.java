@@ -53,13 +53,22 @@ public class SpeechRecActivity extends Activity implements RecognitionListener {
 
     private SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
+    private Bundle state;
+    static String REPEAT_MESSAGE = "Repeat Your Command!";
+    static String REPEAT_MESSAGE_2 = "Say, Hey Buddy!";
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_rec);
-        startTime = SystemClock.uptimeMillis();;
+
+        state = savedInstanceState;
+        startTime = SystemClock.uptimeMillis();
+
+        Log.v("TESTSpeechRec", "onCreate");
+
+
 
 
         System.out.println(APP_TAG + ": SpeechRecognizer.isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(this));
@@ -157,50 +166,56 @@ public class SpeechRecActivity extends Activity implements RecognitionListener {
                 }
                 String txtResult = data.get(0);
                 editText.setText(txtResult);
-                Log.v("Test01", "result:"+ txtResult);
+                Log.v("SRTest", "result:"+ txtResult);
 
                 String res =  COMMANDREC.find_madule_and_object(txtResult);
+                Log.v("SRTest", "res:"+ res);
 
                 Toast.makeText(SpeechRecActivity.this, res, Toast.LENGTH_SHORT).show();
-                if (res != null && !res.isEmpty() && !res.equalsIgnoreCase("Repeat Your Command!") && !res.equalsIgnoreCase("Repeat Your Command!" + "|" + "nothing") ){
-                    String whichModule = res.split("\\|")[0];
-                    String whichObject = res.split("\\|")[1];
-                    //tv_ModuleStatus.setText(whichModule);
-                    String moduleEnabled = whichModule + "module is enabled";
-                    Speech.talk(moduleEnabled, getApplicationContext());
+                if (res != null && !res.isEmpty() && !res.equals("nothing")){
+                    Log.v("SR33", "FIRST");
+                    if(res.equals(REPEAT_MESSAGE) | res.equals(REPEAT_MESSAGE_2)){
+                       Speech.talk("repeat your command", SpeechRecActivity.this);
+                    }else {
+                        String whichModule = res.split("\\|")[0];
+                        String whichObject = res.split("\\|")[1];
+
+                        Log.v("SRTest", "whichMadule:" + whichModule);
+                        Log.v("SRTest", "whichObject:" + whichObject);
 
 
-                    switch (whichModule){
-
-                        case "Text Reading":
-                            Intent i = new Intent(SpeechRecActivity.this, LivePreviewActivity.class);
-                            i.putExtra("whichModule",whichModule);
-                            i.putExtra("whichObject",whichObject);
-                            speechRecognizer.stopListening();
-                            speechRecognizer.destroy();
-                            startActivity(i);
-                            break;
-
-                        default: // "Finding Object", "Scene Description", "Trigger Word"
-                            Intent j = new Intent(SpeechRecActivity.this, ModulesActivity.class);
-                            j.putExtra("whichModule",whichModule);
-                            j.putExtra("whichObject",whichObject);
-                            speechRecognizer.stopListening();
-                            speechRecognizer.destroy();
-                            startActivity(j);
+                        //tv_ModuleStatus.setText(whichModule);
+                        String moduleEnabled = whichModule + "module is enabled";
+                        Speech.talk(moduleEnabled, getApplicationContext());
 
 
+                        switch (whichModule) {
+
+                            case "Text Reading":
+                                Intent i = new Intent(SpeechRecActivity.this, LivePreviewActivity.class);
+                                i.putExtra("whichModule", whichModule);
+                                i.putExtra("whichObject", whichObject);
+                                speechRecognizer.stopListening();
+                                speechRecognizer.destroy();
+                                startActivity(i);
+                                break;
+
+                            default: // "Finding Object", "Scene Description", "Trigger Word"
+                                Intent j = new Intent(SpeechRecActivity.this, ModulesActivity.class);
+                                j.putExtra("whichModule", whichModule);
+                                j.putExtra("whichObject", whichObject);
+                                speechRecognizer.stopListening();
+                                speechRecognizer.destroy();
+                                startActivity(j);
+
+
+                        }
                     }
-
-
-
-
-                }else if(res != null && !res.isEmpty() && res.equalsIgnoreCase("")){
-                    startTime = SystemClock.uptimeMillis();
-                    Speech.talk("Repeat Your Command!", SpeechRecActivity.this);
-                }else{
-                    goToMain(startTime,SystemClock.uptimeMillis());
+                }else {
+                    Log.v("SR33", "SECOND");
+                    goToMain(startTime, SystemClock.uptimeMillis());
                 }
+
 
             }
 
@@ -220,16 +235,27 @@ public class SpeechRecActivity extends Activity implements RecognitionListener {
 
         //Beep
         AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
-        amanager.setStreamMute(AudioManager.STREAM_ALARM, true);
-        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-        amanager.setStreamMute(AudioManager.STREAM_RING, true);
-        amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true);
+      //  amanager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
+      //  amanager.setStreamMute(AudioManager.STREAM_ALARM, true);
+       // amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+       // amanager.setStreamMute(AudioManager.STREAM_RING, true);
+        //amanager.setStreamMute(AudioManager.STREAM_SYSTEM, true);
 
        speechRecognizer.startListening(speechRecognizerIntent);
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.onCreate(state);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.onCreate(state);
+    }
 
     private double goToMain(long start, long end){
         elapsedTimeInSecond =  (double) (end - start) / 1000 ;

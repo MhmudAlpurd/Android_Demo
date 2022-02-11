@@ -26,25 +26,25 @@ static boolean READY = false;
 
 
 public static String find_madule_and_object(String RESULT_TEXT) {
-    String first_word = "" ;
-    String second_word = "" ;
+    String first_word = "";
+    String second_word = "";
 
-    String[] trigger_word_main_keywords ={"hi", "hey"};
+    String[] trigger_word_main_keywords = {"hi", "hey"};
     List<String> trigger_word_main_keywords_lst = Arrays.asList(trigger_word_main_keywords);
 
-    String[] text_reading_main_keywords ={"read", "written","with", "rich", "red", "reach", "write"};
+    String[] text_reading_main_keywords = {"read", "written", "with", "rich", "red", "reach", "write"};
     List<String> text_reading_main_keyworks_lst = Arrays.asList(text_reading_main_keywords);
 
-    String[] finding_object_main_keyworkds ={"where", "what", "there", "here", "wear", "burn", "wear"};
+    String[] finding_object_main_keyworkds = {"where", "what", "there", "here", "wear", "burn", "wear"};
     List<String> finding_object_main_keyworks_lst = Arrays.asList(finding_object_main_keyworkds);
 
-    String[] scene_description_main_keywords ={"explain","explained", "explaining", "explore", "exploring", "explode", "explicit", "expand", "express", "explainit"};
+    String[] scene_description_main_keywords = {"explain", "explained", "explaining", "explore", "exploring", "explode", "explicit", "expand", "express", "explainit"};
     List<String> scene_description_main_keyworks_lst = Arrays.asList(scene_description_main_keywords);
 
 
     // Secondary_Keywords!
     //secondary Trigger word
-    String[] trigger_word_secondary_keywords ={"buddy", "body", "by"};
+    String[] trigger_word_secondary_keywords = {"buddy", "body", "by"};
     List<String> trigger_word_secondary_keywords_lst = Arrays.asList(trigger_word_secondary_keywords);
 
     String[] text_reading_secondary_keywords = {"cash", "call", "label", "catch", "card", "court", "labor", "labour"};
@@ -63,13 +63,9 @@ public static String find_madule_and_object(String RESULT_TEXT) {
     List<String> text_reading_label_card = Arrays.asList(text_reading_card);
 
 
-
-
-
     //MADULES LIST
     String[] madules_names = {"Text Reading", "Finding Object", "Scene Description", "Trigger Word"};
     List<String> madules_names_lst = Arrays.asList(madules_names);
-
 
 
     //List of main lists name
@@ -87,114 +83,115 @@ public static String find_madule_and_object(String RESULT_TEXT) {
     secondary_lst_names_lst.add(trigger_word_secondary_keywords_lst);
 
 
-
-    // Split reslut!
+    // Split result!
     String result_txt = RESULT_TEXT;
     String[] result_words = result_txt.split(" ");
-    ArrayList<String> result_words_lst=new ArrayList<String>();
+    ArrayList<String> result_words_lst = new ArrayList<String>();
 
 
     //preprocessing result words.
-    for(String i : result_words){
+    for (String i : result_words) {
         i = i.toLowerCase().trim();
         result_words_lst.add(i);
     }
     //convert list to collection to use remove() function.
-    Collection result_word_lst_col= new ArrayList(result_words_lst);
+    Collection result_word_lst_col = new ArrayList(result_words_lst);
 
     //length of result word list.
     int result_words_len = result_words_lst.size();
-
+    if (result_words_len > 1) {
     first_word = result_words_lst.get(0).toLowerCase().trim();
 
-        // the  main lists include the first word?
-        int idx_1 = find_madule_index(main_lst_names_lst, first_word);
+    // the  main lists include the first word?
+    int idx_1 = find_madule_index(main_lst_names_lst, first_word);
 
-        pr("idx_1: " + idx_1 );
-        switch(idx_1){
-            case -1:
-                //TODO: check second word!
-                second_word = result_words_lst.get(1).toLowerCase().trim();
-                int idx_2 = find_madule_index(main_lst_names_lst, second_word);
-                Log.v("secondword", "" + idx_2);
-                switch(idx_2){
-                    case -1:
-                        FINAL_RESULT = REPEAT_MESSAGE;
-                        break;
-                    default:
-                        int response = double_check(result_words_lst, second_word , secondary_lst_names_lst, idx_2);
-                        Log.v("secondword", "" + response);
-                        switch(response){
-                            case -1:
-                                pr(REPEAT_MESSAGE);
-                                FINAL_RESULT = REPEAT_MESSAGE;
-                                break;
-                            default:
-                                Log.v("secondword", "" + FINAL_MADULE_IDX);
-                                FINAL_MADULE = madules_names[FINAL_MADULE_IDX];
+    pr("idx_1: " + idx_1);
+    switch (idx_1) {
+        case -1:
+            //TODO: check second word!
+            second_word = result_words_lst.get(1).toLowerCase().trim();
+            int idx_2 = find_madule_index(main_lst_names_lst, second_word);
+            Log.v("secondword", "" + idx_2);
+            switch (idx_2) {
+                case -1:
+                    FINAL_RESULT = REPEAT_MESSAGE;
+                    break;
+                default:
+                    int response = double_check(result_words_lst, second_word, secondary_lst_names_lst, idx_2);
+                    Log.v("secondword", "" + response);
+                    switch (response) {
+                        case -1:
+                            pr(REPEAT_MESSAGE);
+                            FINAL_RESULT = REPEAT_MESSAGE;
+                            break;
+                        default:
+                            Log.v("secondword", "" + FINAL_MADULE_IDX);
+                            FINAL_MADULE = madules_names[FINAL_MADULE_IDX];
 
-                                if(FINAL_MADULE.equals("Text Reading")){
+                            if (FINAL_MADULE.equals("Text Reading")) {
 
-                                    for(String l : text_reading_label){
-                                        boolean isLabel = result_words_lst.contains(l);
-                                        if(isLabel) FINAL_OBJECT = "Label";
-                                    }
-
-                                    for(String c : text_reading_card){
-                                        boolean isCard = result_words_lst.contains(c);
-                                        if(isCard) FINAL_OBJECT = "Card";
-                                    }
-
+                                for (String l : text_reading_label) {
+                                    boolean isLabel = result_words_lst.contains(l);
+                                    if (isLabel) FINAL_OBJECT = "Label";
                                 }
 
-                                Log.v("secondword", "" + FINAL_MADULE);
-                                FINAL_RESULT = FINAL_MADULE + "|" + FINAL_OBJECT ;
-                                pr(FINAL_RESULT);
-                                break;
-                        }
-                        break;
-                }
-                break;
-            default:
-                Log.v("resulttt01", "idx_default"+ "ok");
-                //Double check with secondary lists.
-                //just search in same category of secondary lists and main lists.
-                pr("double_check_section");
-                int response = double_check(result_words_lst, first_word , secondary_lst_names_lst, idx_1);
-                Log.v("test0101", response+"");
-                pr("response" + response);
-                pr("firstword: "+ first_word);
-                switch(response){
-                    case -1:
-                        pr(REPEAT_MESSAGE);
-                        FINAL_RESULT = REPEAT_MESSAGE + "|" + "nothing" ;
-                        break;
-                    default:
-                        FINAL_MADULE = madules_names[FINAL_MADULE_IDX];
-                        if(FINAL_MADULE.equals("Text Reading")){
+                                for (String c : text_reading_card) {
+                                    boolean isCard = result_words_lst.contains(c);
+                                    if (isCard) FINAL_OBJECT = "Card";
+                                }
 
-                            for(String l : text_reading_label){
-                                boolean isLabel = result_words_lst.contains(l);
-                                if(isLabel) FINAL_OBJECT = "Label";
                             }
 
-                            for(String c : text_reading_card){
-                                boolean isCard = result_words_lst.contains(c);
-                                if(isCard) FINAL_OBJECT = "Card";
-                            }
+                            Log.v("secondword", "" + FINAL_MADULE);
+                            FINAL_RESULT = FINAL_MADULE + "|" + FINAL_OBJECT;
+                            pr(FINAL_RESULT);
+                            break;
+                    }
+                    break;
+            }
+            break;
+        default:
+            Log.v("resulttt01", "idx_default" + "ok");
+            //Double check with secondary lists.
+            //just search in same category of secondary lists and main lists.
+            pr("double_check_section");
+            int response = double_check(result_words_lst, first_word, secondary_lst_names_lst, idx_1);
+            Log.v("test0101", response + "");
+            pr("response" + response);
+            pr("firstword: " + first_word);
+            switch (response) {
+                case -1:
+                    pr(REPEAT_MESSAGE);
+                    FINAL_RESULT = REPEAT_MESSAGE + "|" + "nothing";
+                    break;
+                default:
+                    FINAL_MADULE = madules_names[FINAL_MADULE_IDX];
+                    if (FINAL_MADULE.equals("Text Reading")) {
 
+                        for (String l : text_reading_label) {
+                            boolean isLabel = result_words_lst.contains(l);
+                            if (isLabel) FINAL_OBJECT = "Label";
                         }
-                        FINAL_RESULT = FINAL_MADULE + "|" + FINAL_OBJECT ;
-                        pr(FINAL_RESULT);
-                        break;
-                }
-                break;
-        }
 
+                        for (String c : text_reading_card) {
+                            boolean isCard = result_words_lst.contains(c);
+                            if (isCard) FINAL_OBJECT = "Card";
+                        }
 
+                    }
+                    FINAL_RESULT = FINAL_MADULE + "|" + FINAL_OBJECT;
+                    pr(FINAL_RESULT);
+                    break;
+            }
+            break;
+    }
+}else {
+        FINAL_RESULT = "nothing";
+    }
 
-    return (FINAL_RESULT);
-}
+        return (FINAL_RESULT);
+    }
+
 
 //Global
 //pr: this method prints the input strings.
