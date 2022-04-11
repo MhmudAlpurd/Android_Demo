@@ -169,8 +169,9 @@ public class PocketSphinxActivity extends Activity implements
             return;
 
         String text = hypothesis.getHypstr();
+        Log.v("TEST_HEYBUDDY", "Trigger0: " + text);
         if (text.equals(KEYPHRASE)) {
-            Log.v("TEST_ASR_SERVICE", "triggerword");
+            Log.v("TEST_HEYBUDDY", "Trigger1: " + text);
             switchSearch(MENU_SEARCH);
             intentToSRActivity();
         }
@@ -236,7 +237,7 @@ public class PocketSphinxActivity extends Activity implements
         // The recognizer can be configured to perform multiple searches
         // of different kind and switch between them
 
-        int sensibility = 75;
+        int sensibility = 10;
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))

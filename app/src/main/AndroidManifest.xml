@@ -3,15 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="edu.cmu.pocketsphinx.demo">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <queries>
         <package android:name="com.google.android.googlequicksearchbox" />
     </queries>
-
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
@@ -21,55 +26,62 @@
     <meta-data
         android:name="com.google.android.wearable.standalone"
         android:value="true" />
-
-    <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="ocr"/>
-
-
+    <meta-data
+        android:name="com.google.android.gms.vision.DEPENDENCIES"
+        android:value="ocr" />
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="false"
         android:icon="@drawable/cogniteye"
-        android:theme="@style/AppTheme"
-        android:label="@string/app_name">
-        <activity
-            android:name=".ModulesActivity" />
-        <activity
-            android:name=".SpeechRecActivity" />
-        <activity
-            android:name=".textReading.LivePreviewActivity"
-             />
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:hardwareAccelerated="true"
+        android:debuggable="true"
+        android:installLocation="internalOnly"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
 
         <activity
-            android:name=".textToSpeech.Speech"
-             />
-
-        <activity
-            android:name=".textReading.CameraXLivePreviewActivity"
-             />
-        <activity
-            android:name=".preference.SettingsActivity"
-             />
-
-        <activity
-            android:name=".textReading.CameraXSourceDemoActivity"
-             />
-
-        <activity
-            android:name=".textReading.StillImageActivity"
-           />
-
+            android:name=".titleRec.Main2Activity"
+            android:exported="true" >
+        </activity>
+        <activity android:name=".ModulesActivity" />
+        <activity android:name=".SpeechRecActivity" />
+        <activity android:name=".textReading.LivePreviewActivity" />
+        <activity android:name=".textToSpeech.Speech" />
+        <activity android:name=".textReading.CameraXLivePreviewActivity" />
+        <activity android:name=".preference.SettingsActivity" />
+        <activity android:name=".textReading.CameraXSourceDemoActivity" />
+        <activity android:name=".textReading.StillImageActivity" />
         <activity
             android:name=".PocketSphinxActivity"
             android:exported="true"
             android:label="@string/app_name">
+        </activity>
+
+        <activity
+            android:name=".objectDetection.MainObjActivity"
+            android:label="@string/tfe_od_app_name"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".objectDetection.DetectorActivity"
+            android:label="DetectorActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
+        <activity
+            android:name=".objectDetection.CameraActivity"
+            android:label="CameraActivity" />
     </application>
 
 </manifest>

@@ -19,5 +19,25 @@
     <color name="back_primary">#f76c6c</color>
     <color name="text_primary">#ff4141</color>
 
+    <color name="tfe_color_primary">#ffa800</color>
+    <color name="tfe_color_primary_dark">#ff6f00</color>
+    <color name="tfe_color_accent">#425066</color>
+
+    <color name="tfe_semi_transparent">#42000000</color>
+
+    <color name="control_background">#cc4285f4</color>
+    <color name="selection_highlight">#aaaaaa</color>
+    <color name="selection_focus">#eeaa55</color>
+    <color name="item_normal">#eeeeee</color>
+
+
+    <color name="toggle_hover">@color/gray</color>
+    <color name="toggle_normal">@color/gainsboro</color>
+    <color name="toggle_active">@color/silver</color>
+    <color name="toggle_normal_off">@color/darkgray</color>
+    <color name="gainsboro">#DCdCdC</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="darkgray">#a9a9a9</color>
+
 
 </resources>

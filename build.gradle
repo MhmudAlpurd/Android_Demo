@@ -19,5 +19,16 @@ allprojects {
     repositories {
         jcenter()
         google()
+
+        flatDir {
+            dirs 'lib'
+        }
     }
 }
+
+    task clean(type: Delete) {
+        delete rootProject.buildDir
+    }
+
+
+
